@@ -1,12 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Container,
-  Col,
-  Form,
-  Button,
-  Card,
-  Row
-} from 'react-bootstrap';
+import { useMutation } from '@apollo/client';
+import { SAVE_BOOK } from '../utils/mutations';
+import {Container,Col,Form,Button,Card,Row} from 'react-bootstrap';
 
 import Auth from '../utils/auth';
 import { saveBook, searchGoogleBooks } from '../utils/API';
@@ -72,7 +67,8 @@ const SearchBooks = () => {
     }
 
     try {
-      const response = await saveBook(bookToSave, token);
+      // const response = await saveBook(bookToSave, token);
+      const [saveBook, {error}] = useMutation(SAVE_BOOK);
 
       if (!response.ok) {
         throw new Error('something went wrong!');
