@@ -4,6 +4,7 @@ const { signToken } = require('../utils/auth');
 
 const resolvers = {
     Query: {
+        //do I need these?//
         //user
         user: async (parent, { username }) => {
             return User.findOne({ username })
@@ -16,6 +17,9 @@ const resolvers = {
             // .select('-__v -password')
             // .populate('savedBooks')
         },
+//do I need these?//
+
+
         //me
         me: async (parent, args, context) => {
             if (context.user) {
