@@ -8,7 +8,7 @@ import Auth from '../utils/auth';
 
 const LoginForm = () => {
   const [userFormData, setUserFormData] = useState({ email: '', password: '' });
-  const [validated] = useState(false);
+  const [validated, setValidated] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [loginUser, {error}] = useMutation(LOGIN_USER);
 
@@ -19,23 +19,24 @@ const LoginForm = () => {
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
-
+    console.log(userFormData);
     const form = event.currentTarget;
-    if (form.checkValidity() === false) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
+
+    // if (form.checkValidity() === false) {
+    //   event.stopPropagation();
+    //   setValidated(true);
+    //   return;
+    // }
 
     try {
-      // const response = await loginUser(userFormData);
       const { data } = await loginUser({
         variables: { ...userFormData },
-      });
-      console.log(data.loginUser);
+      })
+      
+      Auth.login(loginUser.token);
 
-      Auth.login(data.loginUser.token);
-
-    } catch (err) {
+      } catch (err) {
+      console.log(userFormData)
       console.error(err);
       setShowAlert(true);
     }

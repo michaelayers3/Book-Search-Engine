@@ -4,21 +4,6 @@ const { signToken } = require('../utils/auth');
 
 const resolvers = {
     Query: {
-        //do I need these?//
-        //user
-        user: async (parent, { username }) => {
-            return User.findOne({ username })
-            // .select('-__v -password')
-            // .populate('savedBooks')
-        },
-        //users
-        users: async () => {
-            return User.find()
-            // .select('-__v -password')
-            // .populate('savedBooks')
-        },
-//do I need these?//
-
 
         //me
         me: async (parent, args, context) => {
@@ -29,15 +14,17 @@ const resolvers = {
         },
     },
     Mutation: {
-        //createUser
+        
         createUser: async (parent, { username, email, password }) => {
             const user = await User.create({ username, email, password });
             const token = signToken(user);
             return { token, user };
         },
+       
+          
         //login
         login: async (parent, { email, password }) => {
-            const user = await Profile.findONe({ email });
+            const user = await User.findOne({ email });
             if (!user) {
                 throw new AuthenticationError('No user found with this email address');
             }

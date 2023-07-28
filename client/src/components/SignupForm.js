@@ -27,15 +27,15 @@ const handleFormSubmit = async (event) => {
   }
 
   try {
+    // const response = await createUser(userFormData); 
     const { data } = await createUser({
       variables: { ...userFormData },
-    });
+    })
 
-    console.log(data.addUser);
-
-    Auth.login(data.createUser.token);
+    Auth.login(createUser.token);
   } catch (err) {
     console.error(err);
+    console.log(userFormData)
     setShowAlert(true);
   }
 
