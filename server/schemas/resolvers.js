@@ -45,7 +45,7 @@ const resolvers = {
                     { new: true, runValidators: true }
                 );
             };
-            throw new AuthenticationError('You need to be logged in!');
+            throw new AuthenticationError('poo!');
         },
         //deleteBook
         removeBook: async (parent, { bookData }, context) => {

@@ -2,15 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { useMutation } from '@apollo/client';
 import { SAVE_BOOK } from '../utils/mutations';
 import {Container,Col,Form,Button,Card,Row} from 'react-bootstrap';
-
 import Auth from '../utils/auth';
+import AuthService from '../utils/auth';
+// import Auth from '../utils/auth';
 import { searchGoogleBooks } from '../utils/API';
 import { saveBookIds, getSavedBookIds } from '../utils/localStorage';
 
 const SearchBooks = () => {
   const [searchedBooks, setSearchedBooks] = useState([]);
   const [searchInput, setSearchInput] = useState('');
-  
+  const [validated, setValidated] = useState(false);
   const [savedBookIds, setSavedBookIds] = useState(getSavedBookIds());
   const [saveBook, {error}] = useMutation(SAVE_BOOK);
 
@@ -21,7 +22,13 @@ const SearchBooks = () => {
   // create method to search for books and set state on form submit
   const handleFormSubmit = async (event) => {
     event.preventDefault();
+    const form = event.currentTarget;
 
+    if (form.checkValidity() === false) {
+      event.stopPropagation();
+      setValidated(true);
+      return;
+    }
     if (!searchInput) {
       return false;
     }
@@ -41,8 +48,10 @@ const SearchBooks = () => {
         title: book.volumeInfo.title,
         description: book.volumeInfo.description,
         image: book.volumeInfo.imageLinks?.thumbnail || '',
+        link: book.volumeInfo.infoLink,
       }));
-
+      
+      console.log(bookData)
       setSearchedBooks(bookData);
       setSearchInput('');
     } catch (err) {
@@ -50,43 +59,29 @@ const SearchBooks = () => {
     }
   };
 
-  
-
-  // const handleSaveBook = async (bookId) => {
-  //   const bookToSave = searchedBooks.find((book) => book.bookId === bookId);
-
-  //   try {
-  //     // const {data} = await saveBook(bookToSave);
-  //     const response = await saveBook({
-  //       variables: {
-  //         input: bookToSave,
-  //       },
-  //     });
-
   const handleSaveBook = async (bookId) => {
+    if (!AuthService.loggedIn()) {
+      // Show an error message or redirect to the login page
+      console.log('You need to be logged in to save a book.');
+      return;
+    }
     const bookToSave = searchedBooks.find((book) => book.bookId === bookId);
-  
     try {
       const { data } = await saveBook({
-        variables: {
-          bookData: {
-            authors: bookToSave.authors,
-            description: bookToSave.description,
-            bookId: bookToSave.bookId,
-            image: bookToSave.image,
-            link: bookToSave.link,
-            title: bookToSave.title,
-          },
+        variables:
+         { authors: bookToSave.authors,
+          description: bookToSave.description,
+          title: bookToSave.title,
+          bookId: bookToSave.bookId,
+          image: bookToSave.image,
+          link: bookToSave.link,
         },
       });
 
-      const savedBook = data.saveBook;
-      // if book successfully saves to user's account, save book id to state
-      setSavedBookIds([...savedBookIds, savedBook.bookId]);
-      if (savedBook.token) {
-        Auth.saveBook(savedBook.token);
-      }
+      setSavedBookIds([...savedBookIds, bookToSave.bookId]);
     } catch (err) {
+      console.log(bookToSave)
+      console.log(bookToSave.bookId)
       console.error(err);
     }
   };
