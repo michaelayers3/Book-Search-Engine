@@ -66,6 +66,12 @@ const SearchBooks = () => {
       return;
     }
     const bookToSave = searchedBooks.find((book) => book.bookId === bookId);
+    const token = Auth.loggedIn() ? Auth.getToken() : null;
+
+    if(!token) {
+      return false;
+    }
+    console.log(token)
     try {
       const { data } = await saveBook({
         variables:
@@ -75,12 +81,14 @@ const SearchBooks = () => {
           bookId: bookToSave.bookId,
           image: bookToSave.image,
           link: bookToSave.link,
+
         },
-      });
+      },token);
 
       setSavedBookIds([...savedBookIds, bookToSave.bookId]);
     } catch (err) {
       console.log(bookToSave)
+      
       console.log(bookToSave.bookId)
       console.error(err);
     }

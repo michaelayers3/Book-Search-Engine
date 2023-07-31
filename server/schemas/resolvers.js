@@ -45,7 +45,9 @@ const resolvers = {
                     { new: true, runValidators: true }
                 );
             };
+           
             throw new AuthenticationError('poo!');
+
         },
         //deleteBook
         removeBook: async (parent, { bookData }, context) => {
@@ -53,7 +55,7 @@ const resolvers = {
                 return User.findOneAndUpdate(
                     { _id: context.user._id },
                     { $pull: { savedBooks: { bookId: bookData.bookId } } },
-                    { new: true }
+                    // { new: true }
                 );
             }
             throw new AuthenticationError('You need to be logged in!');

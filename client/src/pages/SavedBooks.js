@@ -6,19 +6,23 @@ import {GET_ME} from '../utils/queries';
 // import { getMe, deleteBook } from '../utils/API';
 import Auth from '../utils/auth';
 import { removeBookId } from '../utils/localStorage';
+import { savedBookIds, getSavedBookIds } from '../utils/localStorage';
 
 
   const SavedBooks = () => {
     // useQuery hook to fetch user data
     const {loading, error, data } = useQuery(GET_ME);
     const [removeBook] = useMutation(REMOVE_BOOK);
-  
+    // const savedBookIds = getSavedBookIds();
     // Check for loading and error states
     if (loading) return <div>Loading...</div>;
     if (error) return <div>Error: {error.message}</div>;
-  
-    const userData = data?.me || {}; 
     
+    const userData = data?.me || {};
+    //  const savedBookIds = userData.savedBooks || [];
+    const test = getSavedBookIds(userData);
+
+    console.log(test);
   
   const handleDeleteBook = async (bookId) => {
     const token = Auth.loggedIn() ? Auth.getToken() : null;
@@ -32,20 +36,13 @@ import { removeBookId } from '../utils/localStorage';
         variables: { bookId: bookId },
       });
 
-      // const response = await deleteBook(bookId, token);
-
-
-      // upon success, remove book's id from localStorage
       removeBookId(bookId);
     } catch (err) {
       console.error(err);
     }
   };
 
-  // if data isn't here yet, say so
-  // if (!userDataLength) {
-  //   return <h2>LOADING...</h2>;
-  // }
+ 
 
   return (
     <>

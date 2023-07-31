@@ -22,21 +22,20 @@ const LoginForm = () => {
     console.log(userFormData);
     const form = event.currentTarget;
 
-    // if (form.checkValidity() === false) {
-    //   event.stopPropagation();
-    //   setValidated(true);
-    //   return;
-    // }
-
     try {
-      const { data } = await loginUser({
-        variables: { ...userFormData },
-      })
-      
-      Auth.login(loginUser.token);
+      const response = await loginUser(userFormData)
+      console.log(response)
+      if(!response.ok){
+        throw new Error('something went wrong')
+      }
+      const { token, user } = await response.json;
+
+      console.log(token, user)
+
+      Auth.login(token);
 
       } catch (err) {
-      console.log(userFormData)
+     
       console.error(err);
       setShowAlert(true);
     }

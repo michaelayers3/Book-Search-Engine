@@ -18,13 +18,14 @@ const SignupForm = () => {
 
 const handleFormSubmit = async (event) => {
   event.preventDefault();
+  console.log(userFormData)
   const form = event.currentTarget;
 
-  if (form.checkValidity() === false) {
-    event.stopPropagation();
-    setValidated(true);
-    return;
-  }
+  // if (form.checkValidity() === false) {
+  //   event.stopPropagation();
+  //   setValidated(true);
+  //   return;
+  // }
 
   try {
     // const response = await createUser(userFormData); 
@@ -32,7 +33,7 @@ const handleFormSubmit = async (event) => {
       variables: { ...userFormData },
     })
 
-    Auth.login(createUser.token);
+    Auth.login(data.createUser.token);
   } catch (err) {
     console.error(err);
     console.log(userFormData)
